@@ -1,0 +1,16 @@
+###
+POST http://localhost:3000/postexample
+content-type: application/json
+
+{
+    
+}
+
+###
+GET http://localhost:3000/
+
+###
+DELETE http://localhost:3000/deleteexample
+
+###
+GET http://localhost:3000/users/
