@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <script src="/public/js/script.js"></script>
 </head>
 <body>
+    {{>nav}}
     <h1>Welcome To app:{{name}}</h1>
+
+    <fieldset>
+        <legend>Form</legend>
+        <input type="text" name="" id="city">
+        <input type="button" value="Submit" onclick="getData()">
+        <p id="result"></p>
+    </fieldset>
 </body>
 </html>
