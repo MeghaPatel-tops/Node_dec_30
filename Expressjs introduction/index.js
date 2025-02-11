@@ -6,6 +6,9 @@ const path = require('path')
 var axios = require('axios')
 const getWhetherApp = require('./src/getwhether')
 const Db = require('./db');
+const bodyParser = require('body-parser')
+const Controller = require('./controller')
+
 
 const app = express();
 
@@ -20,6 +23,8 @@ const errorMiddleware = (err,req,res,next)=>{
     res.status(500).send("Smoting Wrong")
 }
 
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json());
 app.use('/public',express.static(path.join(__dirname,'public')))
 app.set('views', path.join(__dirname,"views"))
 console.log(path.join(__dirname,'views'))
@@ -93,6 +98,47 @@ app.get('/citydata/:city',(req,res)=>{
 
 app.get('/connectdb',(req,res)=>{
     Db.updateData()
+})
+
+app.get('/userreg',(req,res)=>{
+    res.render('userregistration');
+
+})
+
+
+app.post('/reg',(req,res)=>{
+    Controller.addUser(req,res,(data,err)=>{
+        if(data){
+           res.json(data);
+        }
+        else{
+            res.status(500).json(err);
+        }
+    })
+})
+app.get('/viewuser',(req,res)=>{
+    Controller.getUsers(req,res,(data,error)=>{
+        if(data){
+            //console.log(data)
+            res.render('users',{users:data})
+        }
+        else{
+            res.status(500).json(error);
+        }
+    })
+})
+
+app.get('/delete/:id',(req,res)=>{
+    Controller.deleteUser(req,res,(data,error)=>{
+        if(data){
+            //res.status(200).json(data);
+            res.redirect('/viewuser')
+        }
+        else{
+            console.log(error)
+            res.status(500).json(error);
+        }
+    })
 })
 
 
