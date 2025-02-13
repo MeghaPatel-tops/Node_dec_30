@@ -20,6 +20,7 @@
         <th>Price</th>
         <th>Description</th>
         <th>Quantity</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -29,6 +30,12 @@
             <td>{{this.price}}</td>
             <td>{{this.description}}</td>
             <td>{{this.qty}}</td>
+            <td><a href="/editproduct/{{this._id}}" class="btn btn-success">Edit</a></td>
+            <td>
+              <form method="post" action="/deleteproduct/{{this._id}}">
+                  <input type="submit" value="Delete" class="btn btn-danger">
+              </form>
+            </td>
         </tr>
      {{/each}}
     </tbody>

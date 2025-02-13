@@ -24,7 +24,7 @@ app.get('/addproduct',async(req,res)=>{
 app.post('/productadd',(req,res)=>{
     productController.addProduct(req,res,(data,err)=>{
         if(data){
-            res.status(200).json({"msg":"data sucessfully inserted!",'product':data})
+            res.redirect('/viewproduct');
         }
         else{
             res.status(500).json(err);
@@ -37,6 +37,35 @@ app.get('/viewproduct',(req,res)=>{
             res.render('viewproduct.hbs',{product:data});
         }
     });
+})
+
+app.get('/editproduct/:id',(req,res)=>{
+     productController.editProduct(req,res,(data,err)=>{
+        if(data){
+            res.render('editproduct.hbs',{product:data});
+        }
+     })
+})
+
+app.post('/productupdate/:id',(req,res)=>{
+   productController.updateProduct(req,res,(data,err)=>{
+    if(data){
+        res.redirect('/viewproduct');
+    }
+    else{
+        res.status(500).json({"error":err});
+    }
+   })
+})
+
+app.post('/deleteproduct/:id',(req,res)=>{
+    productController.deleteProduct(req,res,(data,err)=>{
+        if(data){
+            res.redirect('/viewproduct');
+        }else{
+            res.status(500).json(err);
+        }
+    })
 })
 
 app.listen(port,()=>{
