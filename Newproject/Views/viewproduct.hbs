@@ -30,6 +30,7 @@
             <td>{{this.price}}</td>
             <td>{{this.description}}</td>
             <td>{{this.qty}}</td>
+            <td><img src="upload/{{this.productimg}}" alt="" height="100px" width="100px"></td>
             <td><a href="/editproduct/{{this._id}}" class="btn btn-success">Edit</a></td>
             <td>
               <form method="post" action="/deleteproduct/{{this._id}}">

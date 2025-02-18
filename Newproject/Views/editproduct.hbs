@@ -12,7 +12,7 @@
 
 <div class="container">
   <h2>Vertical (basic) form</h2>
-  <form action="/productupdate/{{product._id}}" method="POST">
+  <form action="/productupdate/{{product._id}}" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       <label for="email">ProductName:</label>
       <input type="text" class="form-control" id="email" placeholder="Enter Productname" name="productname" value="{{product.productname}}">
@@ -29,6 +29,11 @@
       <label for="email">Quantity:</label>
       <input type="text" class="form-control" id="email" placeholder="Enter Productname" name="qty"  value="{{product.qty}}"
       >
+    </div>
+    <div class="form-group">
+      <label for="email">Image:</label>
+      <img src="upload/{{product.productimg}}" alt="" height="100px" width="100px">
+      <input type="file" class="form-control" id="email" placeholder="Enter Productname" name="pimg" required>
     </div>
    
     <button type="submit" class="btn btn-default">Submit</button>
