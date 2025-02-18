@@ -9,6 +9,7 @@ var port = process.env.PORT;
 var productController = require('./Controller/ProductController')
 var multer = require('multer')
 var path = require('path');
+var userroute = require('./Route/userroute')
 
 var hbs = require('hbs');
 
@@ -21,7 +22,7 @@ hbs.registerPartials(__dirname+'views');
 
 app.use("/upload",express.static(path.join(__dirname,'upload')));
 
-
+app.use('/users',userroute);
 app.get('/addproduct',async(req,res)=>{
     res.render('index.hbs');
 })
