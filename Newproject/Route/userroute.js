@@ -1,6 +1,7 @@
 var express = require('express');
 var Router = express.Router();
 var UserController = require('../Controller/UserController');
+const Auth = require('../Middleware/Auth');
 
 Router.get('/index',(req,res)=>{
     res.json("user route");
@@ -29,8 +30,8 @@ Router.post('/verifyuser',(req,res)=>{
         UserController.verifyUsers(req,res);
 })
 
-Router.get('/home',(req,res)=>{
-    res.send("welcome to Homen page");
+Router.get('/home',Auth,(req,res)=>{
+    res.send(`welcome to Homen page ${req.session.userId}`);
 })
 
 module.exports= Router;

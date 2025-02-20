@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../Modal/Users');
+const session = require('express-session')
 
 const saltRound = 10;
 
@@ -30,6 +31,7 @@ const verifyUsers= async(req,res)=>{
         if(userData){
             const flag = await bcrypt.compare(req.body.password,userData.password);
             if(flag){
+                req.session.userId = userData._id;
                 res.redirect('/users/home');
             }
             else{

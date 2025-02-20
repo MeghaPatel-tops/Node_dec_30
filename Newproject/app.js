@@ -10,12 +10,23 @@ var productController = require('./Controller/ProductController')
 var multer = require('multer')
 var path = require('path');
 var userroute = require('./Route/userroute')
+var session = require('express-session')
+var Auth = require('./Middleware/Auth');
 
 var hbs = require('hbs');
 
 // Body-parser middleware
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(bodyparser.json())
+
+//session
+app.use(session({ 
+  
+    // It holds the secret key for session 
+    secret: 'Your_Secret_Key', 
+    resave:true,
+    saveUninitialized: true
+})) 
 
 app.set('view engine','hbs');
 hbs.registerPartials(__dirname+'views');
