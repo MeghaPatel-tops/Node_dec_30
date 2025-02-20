@@ -31,7 +31,13 @@ Router.post('/verifyuser',(req,res)=>{
 })
 
 Router.get('/home',Auth,(req,res)=>{
-    res.send(`welcome to Homen page ${req.session.userId}`);
+    UserController.userDetails(req,res,(data)=>{
+        res.render('User/Home.hbs',{user:data});
+    })
+})
+
+Router.get('/logout',(req,res)=>{
+    UserController.logout(req,res);
 })
 
 module.exports= Router;

@@ -8,7 +8,7 @@ const Auth = async(req,res,next)=>{
             next();
         }
         else{
-            res.redirect('users/login');
+            res.redirect('login');
         }
         
     } catch (error) {

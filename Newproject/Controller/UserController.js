@@ -24,6 +24,19 @@ const addUser = async(req,res,cb)=>{
     
 }
 
+const userDetails = async(req,res,cb)=>{
+    try {
+        console.log(req.body);
+        const userData = await User.findById(req.session.userId);
+        if(userData){
+            cb(userData)
+        }
+       
+    } catch (error) {
+                res.status(500).json(error);
+    }
+}
+
 const verifyUsers= async(req,res)=>{
     try {
         console.log(req.body);
@@ -46,4 +59,16 @@ const verifyUsers= async(req,res)=>{
     }
 }
 
-module.exports = {addUser,verifyUsers}
+const logout= async(req,res)=>{
+    try {
+        console.log(req.session.userId);
+        req.session.destroy((err)=>{
+            console.log(err);
+        })
+    res.redirect('/users/login');
+    } catch (error) {
+        
+    }
+}
+
+module.exports = {addUser,verifyUsers,userDetails,logout}
