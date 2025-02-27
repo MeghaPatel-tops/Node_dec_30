@@ -1,5 +1,8 @@
 var Product = require('../Modal/Product')
+var axios = require('axios')
 var fs = require('fs');
+var ProductModal= require('../Modal/ProductModal');
+var Cart = require('../Modal/Cart')
 const addProduct = async(req,res,cb)=>{
         try {
            const product = new Product({
@@ -87,4 +90,44 @@ const deleteProduct= async(req,res,cb)=>{
     }
 }
 
-module.exports={addProduct,viewProduct,editProduct,updateProduct,deleteProduct}
+const getFakeProduct = async(req,res,cb)=>{
+    try {
+        const products = await ProductModal.find();
+        // console.log(products.data);
+        // const result = await ProductModal.insertMany(products.data);
+        // if(result){
+        //     console.log(result);
+        // }
+
+        if(products){
+            cb(products)
+        }
+        
+    } catch (error) {
+        cb(undefined,error);
+    }
+}
+
+const addtocart = async(req,res,cb)=>{
+   
+    try {
+        const pid= req.params.pid;
+        const userId= req.session.userId;
+        const product = await ProductModal.findById(pid);
+        console.log(product)
+        var price =0;
+        if(product){
+            price= product.price;
+         }
+        
+        const result = await Cart.insertOne({"userId":userId,"productId":pid,"qty":1,"subtotal":price});
+        if(result){
+            cb(result);
+        }
+    } catch (error) {
+        cb(undefined,error);
+        console.log(error)
+    }
+}
+
+module.exports={addProduct,viewProduct,editProduct,updateProduct,deleteProduct,getFakeProduct,addtocart}

@@ -12,6 +12,7 @@ var path = require('path');
 var userroute = require('./Route/userroute')
 var session = require('express-session')
 var Auth = require('./Middleware/Auth');
+var productroute= require('./Route/product');
 
 var hbs = require('hbs');
 
@@ -25,7 +26,12 @@ app.use(session({
     // It holds the secret key for session 
     secret: 'Your_Secret_Key', 
     resave:true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+
+        // Session expires after 1 min of inactivity.
+        expires: 60000*30
+    }
 })) 
 
 app.set('view engine','hbs');
@@ -34,6 +40,7 @@ hbs.registerPartials(__dirname+'views');
 app.use("/upload",express.static(path.join(__dirname,'upload')));
 
 app.use('/users',userroute);
+app.use('/products',productroute);
 app.get('/addproduct',async(req,res)=>{
     res.render('index.hbs');
 })
