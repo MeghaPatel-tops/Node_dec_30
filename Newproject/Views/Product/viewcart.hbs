@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>Product Details</h2>
+  <a href="/addproduct" class="btn btn-primary">Add Product</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ProductName</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+       
+      </tr>
+    </thead>
+    <tbody id="cartbody">
+        {{#each cartdata.cartdata}}
+            <tr>
+                <td>{{this.productId.title}}</td>
+                <td>{{this.productId.price}}</td>
+                <td><input type="number" name="" id="qtyid" value="{{this.qty}}" onchange="updatecart('{{this._id}}',this.value)"></td>   
+                <td>{{#multiple this.qty this.productId.price}}{{/multiple}}</td> 
+                 
+            </tr>
+        {{/each}}
+        <tr><td id="totalid">Total:{{cartdata.total}}</td></tr>
+         <span> Cost:- 499 Rupees 
+        <button id="pay-button" >
+            Pay Now & Get Access
+        </button> 
+    </span>
+        {{!-- <form action="/products/order" method="POST">
+            <input type="hidden" name="amount" value="{{cartdata.total}}">
+            <input type="submit" value="" >
+        </form> --}}
+    </tbody>
+  </table>
+</div>
+<script>
+    function updatecart(cartid,num){
+      $("#totalid").hide();
+      alert(cartid);
+      alert(num);
+       $.ajax({
+        url:"cartupdate",
+        data:{"cartid":cartid,"num":num},
+        method:"POST",
+        success:function(data){
+            console.log(data.data);
+            str="";
+            total=0;
+            for(index of data.data){
+              total= total + (index.qty*index.productId.price);
+              str+=`<tr>
+                <td>${index.productId.title}</td>
+                <td>${index.productId.price}</td>
+                <td><input type="number" name="" id="qtyid" value="${index.qty}" onchange="updatecart('${index._id}',this.value)"></td>   
+                <td>${ index.qty * index.productId.price}</td>   
+            </tr>`;
+            
+
+            }
+            str+=`<tr><td>${total}</td></tr>`;
+            $("#cartbody").html(str);
+        }
+       })
+    }
+</script>
+<!--Inside index.html -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  function payAdd(response){
+      $.ajax({
+          method:"POST",
+          url:"http://localhost:5000/products/payment",
+          data:response,
+          success:function(data){
+            console.log(data)
+          }
+      })
+  }
+  function payFunction(data){
+     var options = {
+       "key": "rzp_test_GqyF5g931GFt3g", 
+       "amount": data.amount, 
+       "currency": data.currency,
+       "name": "Dummy Academy",
+       "order_id": data.order_id,  
+       "handler": function (response){
+           console.log(response)
+           alert("This step of Payment Succeeded");
+           payAdd(response)
+       },
+       "prefill": {
+          //Here we are prefilling random contact
+         "contact":"9876543210", 
+           //name and email id, so while checkout
+         "name": "Twinkle Sharma",  
+         "email": "smtwinkle@gmail.com"  ,
+       },
+      
+      
+   };
+   var razorpayObject = new Razorpay(options);
+   console.log(razorpayObject);
+   razorpayObject.on('payment.failed', function (response){
+         console.log(response);
+         alert("This step of Payment Failed");
+   });
+    razorpayObject.open();
+  }
+   
+   document.getElementById('pay-button').onclick = function(e){
+     
+      e.preventDefault();
+       $.ajax({
+          method:"POST",
+          url:"/products/order",
+          data:{"amount":100},
+          success:function(data){
+            console.log(data)
+            payFunction(data);
+          }
+
+       })
+   }
+</script>
+
+</body>
+</html>

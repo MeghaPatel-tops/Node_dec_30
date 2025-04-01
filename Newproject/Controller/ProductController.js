@@ -3,6 +3,28 @@ var axios = require('axios')
 var fs = require('fs');
 var ProductModal= require('../Modal/ProductModal');
 var Cart = require('../Modal/Cart')
+const User = require('../Modal/Users');
+const Model = require('../Modal/Order');
+const Order = require('../Modal/Order')
+
+const paymentAdd= async(req,res,cb)=>{
+   try {
+    console.log(req.body)
+    const paymentDetails = new Order({
+        userId:req.session.userId,
+        payment_id:req.body.razorpay_payment_id,        
+        order_id:req.body.razorpay_order_id,
+    });
+    const result = await paymentDetails.save();
+    if(result){
+        cb(result)
+    }
+   } catch (error) {
+    cb(undefined,error)
+    console.log(error)
+   }
+}
+
 const addProduct = async(req,res,cb)=>{
         try {
            const product = new Product({
@@ -92,13 +114,16 @@ const deleteProduct= async(req,res,cb)=>{
 
 const getFakeProduct = async(req,res,cb)=>{
     try {
-        const products = await ProductModal.find();
+        // const products= await axios.get("https://fakestoreapi.com/products");
+        // console.log(products.data);
+       
         // console.log(products.data);
         // const result = await ProductModal.insertMany(products.data);
         // if(result){
         //     console.log(result);
+        //     cb(products)
         // }
-
+        const products = await ProductModal.find();
         if(products){
             cb(products)
         }
@@ -114,13 +139,22 @@ const addtocart = async(req,res,cb)=>{
         const pid= req.params.pid;
         const userId= req.session.userId;
         const product = await ProductModal.findById(pid);
-        console.log(product)
-        var price =0;
-        if(product){
-            price= product.price;
-         }
-        
-        const result = await Cart.insertOne({"userId":userId,"productId":pid,"qty":1,"subtotal":price});
+        const cartProduct = await Cart.findOne({productId:pid,userId:req.session.userId});
+        console.log(cartProduct);
+        var result;
+        if(cartProduct){
+            result = await Cart.updateOne({_id:cartProduct._id},{$inc:{qty:1}});
+        }
+        else{
+            console.log(product)
+            var price =0;
+            if(product){
+                price= product.price;
+             }
+            
+            result = await Cart.insertOne({"userId":userId,"productId":pid,"qty":1,"subtotal":price});
+        }
+      
         if(result){
             cb(result);
         }
@@ -130,4 +164,39 @@ const addtocart = async(req,res,cb)=>{
     }
 }
 
-module.exports={addProduct,viewProduct,editProduct,updateProduct,deleteProduct,getFakeProduct,addtocart}
+const ViewCart = async(req,res,cb)=>{
+    try {
+        console.log( req.session.userId);
+        var total=0;
+        const cartdata = await Cart.find({userId:req.session.userId}).populate('productId');
+        //console.log(cartdata);
+
+        for(index of cartdata){
+            total += (index.productId.price*index.qty);
+            console.log(index)
+        }
+        var result = {"cartdata":cartdata,"total":total}
+        if(cartdata){
+            cb(result)
+        }
+    } catch (error) {
+        cb(undefined,error)
+    }
+}
+
+const updateCart = async(req,res,cb)=>{
+    try {
+        const data = await Cart.updateOne({_id:req.body.cartid},{$set:{"qty":req.body.num}});
+        console.log( req.session.userId);
+        const cartdata = await Cart.find({userId:req.session.userId}).populate('productId');
+        if(cartdata){
+            cb(cartdata)
+        }
+    } catch (error) {
+        
+    }
+}
+
+
+
+module.exports={addProduct,viewProduct,editProduct,updateProduct,deleteProduct,getFakeProduct,addtocart,ViewCart,updateCart,paymentAdd}

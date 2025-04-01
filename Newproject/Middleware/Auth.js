@@ -2,8 +2,9 @@ const User = require('../Modal/Users');
 const Auth = async(req,res,next)=>{
     try {
         const userid= req.session.userId;
-        console.log(userid);
+       
         const user = await User.findById(userid)
+        console.log(user);
         if(user){
             next();
         }

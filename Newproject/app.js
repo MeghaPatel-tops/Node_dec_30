@@ -1,6 +1,5 @@
 var express= require('express');
 var cors= require('cors');
-
 var app = express();
 const bodyparser = require('body-parser')
 var dotenv= require('dotenv').config();
@@ -13,8 +12,18 @@ var userroute = require('./Route/userroute')
 var session = require('express-session')
 var Auth = require('./Middleware/Auth');
 var productroute= require('./Route/product');
+var ApiRoute = require('./Route/apiroute')
 
 var hbs = require('hbs');
+
+hbs.registerHelper("multiple",function(index,value){
+    return index * value;
+}
+);
+hbs.registerHelper("addition",function(index,value){
+    return index + value;
+}
+);
 
 // Body-parser middleware
 app.use(bodyparser.urlencoded({ extended: true }))
@@ -24,14 +33,13 @@ app.use(bodyparser.json())
 app.use(session({ 
   
     // It holds the secret key for session 
-    secret: 'Your_Secret_Key', 
-    resave:true,
-    saveUninitialized: true,
+    secret: 'nodeapp', 
+    resave: true,
+    saveUninitialized: false,
     cookie: {
-
-        // Session expires after 1 min of inactivity.
-        expires: 60000*30
-    }
+        expires: 60000 *30
+    } 
+    
 })) 
 
 app.set('view engine','hbs');
@@ -41,6 +49,7 @@ app.use("/upload",express.static(path.join(__dirname,'upload')));
 
 app.use('/users',userroute);
 app.use('/products',productroute);
+app.use('/api/',ApiRoute)
 app.get('/addproduct',async(req,res)=>{
     res.render('index.hbs');
 })

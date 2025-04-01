@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const ProductModalSchema = new mongoose.Schema({
     'title':{
         type:String,

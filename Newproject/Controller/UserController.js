@@ -39,12 +39,12 @@ const userDetails = async(req,res,cb)=>{
 
 const verifyUsers= async(req,res)=>{
     try {
-        console.log(req.body);
         const userData = await User.findOne({email:req.body.email});
         if(userData){
             const flag = await bcrypt.compare(req.body.password,userData.password);
             if(flag){
                 req.session.userId = userData._id;
+               // console.log(req.session);
                 res.redirect('/users/home');
             }
             else{

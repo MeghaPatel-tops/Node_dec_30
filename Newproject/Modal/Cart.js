@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const producCollection = require("../Modal/ProductModal")
 
 const CartSchema = new mongoose.Schema({
     userId: {
@@ -8,7 +9,7 @@ const CartSchema = new mongoose.Schema({
     },
     productId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "productcollection", // Reference to the products collection
+        ref: producCollection, // Reference to the products collection
         required: true,
     },
     qty: {
